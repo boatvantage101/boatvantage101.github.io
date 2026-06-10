@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>BoatVantage – AI Solutions by James Beniako Boateng</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --navy:      #0A1628;
+      --navy-mid:  #112240;
+      --navy-card: #162A4A;
+      --gold:      #C9A84C;
+      --gold-light:#E8C96A;
+      --white:     #F4F7FF;
+      --muted:     #8A9BBE;
+      --border:    rgba(201,168,76,0.18);
+      --radius:    12px;
+    }
+    html { scroll-behavior: smooth; }
+    body { background: var(--navy); color: var(--white); font-family: 'Inter', sans-serif; font-size: 16px; line-height: 1.6; overflow-x: hidden; }
+
+    /* NAV */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1.1rem 6%; background: rgba(10,22,40,0.88); backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border); transition: box-shadow .3s;
+    }
+    .logo { font-family: 'Syne', sans-serif; font-size: 1.45rem; font-weight: 800; color: var(--white); text-decoration: none; }
+    .logo span { color: var(--gold); }
+    .nav-links { display: flex; gap: 2rem; list-style: none; }
+    .nav-links a { color: var(--muted); text-decoration: none; font-size: 0.9rem; font-weight: 500; transition: color .2s; }
+    .nav-links a:hover { color: var(--gold); }
+    .nav-cta { background: var(--gold); color: var(--navy); padding: .55rem 1.3rem; border-radius: 6px; font-weight: 700; font-size: 0.88rem; text-decoration: none; transition: background .2s; }
+    .nav-cta:hover { background: var(--gold-light); }
+    .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; }
+    .hamburger span { width: 24px; height: 2px; background: var(--white); border-radius: 2px; }
+
+    /* HERO */
+    .hero { min-height: 100vh; display: flex; align-items: center; padding: 7rem 6% 4rem; position: relative; overflow: hidden; }
+    .hero-video-bg { position: absolute; inset: 0; z-index: 0; overflow: hidden; }
+    .hero-video-bg video { width: 100%; height: 100%; object-fit: cover; opacity: 0.17; filter: saturate(0.35) brightness(0.65); }
+    .hero-fallback-bg {
+      position: absolute; inset: 0;
+      background-image: url('https://images.unsplash.com/photo-1677442135703-1787eea5ce01?w=1400&q=60&auto=format&fit=crop');
+      background-size: cover; background-position: center;
+      opacity: 0.13; filter: saturate(0.3) brightness(0.5);
+    }
+    .hero-overlay { position: absolute; inset: 0; z-index: 1; background: linear-gradient(135deg, rgba(10,22,40,0.94) 0%, rgba(10,22,40,0.72) 55%, rgba(10,22,40,0.88) 100%); }
+    .hero-inner { position: relative; z-index: 2; display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; max-width: 1200px; margin: 0 auto; width: 100%; }
+    .hero-tag { display: inline-flex; align-items: center; gap: .5rem; background: rgba(201,168,76,0.1); border: 1px solid var(--border); padding: .35rem .85rem; border-radius: 50px; font-size: 0.78rem; color: var(--gold); font-weight: 600; text-transform: uppercase; letter-spacing: 1.2px; margin-bottom: 1.4rem; }
+    .live-dot { width: 7px; height: 7px; border-radius: 50%; background: #22c55e; animation: pulse 2s infinite; }
+    @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.4;transform:scale(0.8)} }
+    h1 { font-family: 'Syne', sans-serif; font-size: clamp(2.4rem, 4.8vw, 3.8rem); font-weight: 800; line-height: 1.08; letter-spacing: -1.5px; margin-bottom: 1.4rem; }
+    h1 .accent { color: var(--gold); display: block; }
+    .hero-desc { color: var(--muted); font-size: 1.05rem; line-height: 1.8; margin-bottom: 2.2rem; max-width: 480px; }
+    .hero-btns { display: flex; gap: 1rem; flex-wrap: wrap; }
+    .btn-primary { background: var(--gold); color: var(--navy); padding: .85rem 1.8rem; border-radius: 8px; font-weight: 700; font-size: 0.95rem; text-decoration: none; transition: all .25s; display: inline-flex; align-items: center; gap: .5rem; box-shadow: 0 4px 20px rgba(201,168,76,0.3); }
+    .btn-primary:hover { background: var(--gold-light); transform: translateY(-2px); box-shadow: 0 8px 30px rgba(201,168,76,0.4); }
+    .btn-secondary { border: 1.5px solid var(--border); color: var(--white); padding: .85rem 1.8rem; border-radius: 8px; font-weight: 600; font-size: 0.95rem; text-decoration: none; transition: all .25s; display: inline-flex; align-items: center; gap: .5rem; }
+    .btn-secondary:hover { border-color: var(--gold); color: var(--gold); }
+    .hero-visual { display: flex; justify-content: center; align-items: center; position: relative; }
+    .profile-card { background: rgba(22,42,74,0.88); border: 1px solid var(--border); border-radius: 20px; padding: 2.5rem 2rem; text-align: center; position: relative; box-shadow: 0 30px 80px rgba(0,0,0,0.5); max-width: 320px; width: 100%; backdrop-filter: blur(12px); }
+    .profile-card::before { content: ''; position: absolute; top: -1px; left: 20%; right: 20%; height: 2px; background: linear-gradient(90deg, transparent, var(--gold), transparent); }
+    .profile-img-wrap { width: 130px; height: 130px; border-radius: 50%; margin: 0 auto 1.2rem; border: 3px solid var(--gold); background: var(--navy-mid); display: flex; align-items: center; justify-content: center; overflow: hidden; box-shadow: 0 0 0 6px rgba(201,168,76,0.12), 0 8px 30px rgba(0,0,0,0.4); }
+    .profile-img-wrap img { width: 100%; height: 100%; object-fit: cover; object-position: center top; }
+    .profile-img-placeholder { font-size: 3.5rem; }
+    .profile-name { font-family: 'Syne', sans-serif; font-size: 1.15rem; font-weight: 700; margin-bottom: .2rem; }
+    .profile-title { color: var(--gold); font-size: 0.82rem; font-weight: 600; margin-bottom: 1.2rem; }
+    .profile-stats { display: flex; gap: 1rem; justify-content: center; border-top: 1px solid var(--border); padding-top: 1.2rem; }
+    .stat { text-align: center; }
+    .stat-num { font-family: 'Syne', sans-serif; font-size: 1.3rem; font-weight: 800; color: var(--gold); }
+    .stat-label { font-size: 0.7rem; color: var(--muted); text-transform: uppercase; letter-spacing: .5px; }
+    .float-badge { position: absolute; background: rgba(22,42,74,0.92); border: 1px solid var(--border); border-radius: 10px; padding: .6rem 1rem; font-size: 0.8rem; font-weight: 600; display: flex; align-items: center; gap: .5rem; box-shadow: 0 8px 30px rgba(0,0,0,0.4); backdrop-filter: blur(8px); animation: float 4s ease-in-out infinite; white-space: nowrap; }
+    .float-badge.badge-1 { top: -15px; right: -20px; }
+    .float-badge.badge-2 { bottom: 20px; left: -25px; animation-delay: 2s; }
+    .float-badge .dot { width: 8px; height: 8px; border-radius: 50%; background: #22c55e; flex-shrink: 0; }
+    @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
+
+    /* SECTIONS */
+    section { padding: 6rem 6%; }
+    .section-inner { max-width: 1200px; margin: 0 auto; }
+    .section-tag { color: var(--gold); font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 2.5px; margin-bottom: .8rem; }
+    .section-title { font-family: 'Syne', sans-serif; font-size: clamp(1.8rem, 3.5vw, 2.8rem); font-weight: 800; line-height: 1.15; margin-bottom: 1.2rem; }
+    .section-sub { color: var(--muted); font-size: 1rem; max-width: 540px; line-height: 1.75; }
+
+    /* ABOUT */
+    .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; margin-top: 3.5rem; }
+    .about-img-block { background: var(--navy-card); border: 1px solid var(--border); border-radius: 20px; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.35); position: relative; }
+    .about-scene-img { width: 100%; height: 240px; object-fit: cover; object-position: center; filter: saturate(0.6) brightness(0.72); display: block; }
+    .about-img-overlay { position: absolute; top: 0; left: 0; right: 0; height: 240px; background: linear-gradient(180deg, rgba(10,22,40,0.1) 30%, var(--navy-card) 100%); }
+    .about-img-caption { padding: 1.4rem 2rem 2rem; }
+    .about-img-top { display: flex; align-items: center; gap: 1rem; margin-bottom: 1.2rem; }
+    .about-avatar { width: 64px; height: 64px; border-radius: 50%; border: 2px solid var(--gold); background: var(--navy-mid); display: flex; align-items: center; justify-content: center; font-size: 1.6rem; flex-shrink: 0; overflow: hidden; }
+    .about-avatar img { width: 100%; height: 100%; object-fit: cover; }
+    .about-name-block h3 { font-family: 'Syne', sans-serif; font-size: 1rem; font-weight: 700; }
+    .about-name-block p { color: var(--gold); font-size: 0.79rem; }
+    .about-tools { display: flex; flex-wrap: wrap; gap: .5rem; }
+    .tool-tag { background: rgba(201,168,76,0.08); border: 1px solid var(--border); border-radius: 50px; padding: .28rem .85rem; font-size: 0.76rem; color: var(--gold); font-weight: 600; }
+    .about-text p { color: var(--muted); line-height: 1.8; margin-bottom: 1rem; }
+    .about-highlights { display: flex; flex-direction: column; gap: .9rem; margin-top: 1.5rem; }
+    .highlight-item { display: flex; align-items: flex-start; gap: .8rem; }
+    .highlight-icon { width: 36px; height: 36px; border-radius: 8px; background: rgba(201,168,76,0.1); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 1rem; flex-shrink: 0; }
+    .highlight-text strong { font-size: 0.88rem; display: block; margin-bottom: .15rem; }
+    .highlight-text span { color: var(--muted); font-size: 0.81rem; }
+
+    /* SERVICES */
+    .services-bg { background: var(--navy-mid); }
+    .services-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin-top: 3.5rem; }
+    .service-card { background: var(--navy-card); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; transition: all .3s; position: relative; }
+    .service-img-wrap { position: relative; }
+    .service-img { width: 100%; height: 165px; object-fit: cover; object-position: center; filter: saturate(0.45) brightness(0.62); display: block; transition: filter .35s; }
+    .service-card:hover .service-img { filter: saturate(0.7) brightness(0.8); }
+    .service-img-overlay { position: absolute; top: 0; left: 0; right: 0; height: 165px; background: linear-gradient(180deg, rgba(10,22,40,0.25) 0%, var(--navy-card) 100%); }
+    .service-body { padding: 1.4rem 1.7rem 1.8rem; }
+    .service-card::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, var(--gold), transparent); transform: scaleX(0); transform-origin: left; transition: transform .3s; }
+    .service-card:hover { transform: translateY(-5px); border-color: rgba(201,168,76,0.35); }
+    .service-card:hover::after { transform: scaleX(1); }
+    .service-icon { width: 46px; height: 46px; border-radius: 10px; background: rgba(201,168,76,0.1); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 1.3rem; margin-bottom: 1rem; }
+    .service-title { font-family: 'Syne', sans-serif; font-size: 1.05rem; font-weight: 700; margin-bottom: .55rem; }
+    .service-desc { color: var(--muted); font-size: 0.85rem; line-height: 1.7; margin-bottom: 1.1rem; }
+    .service-features { list-style: none; display: flex; flex-direction: column; gap: .38rem; }
+    .service-features li { font-size: 0.8rem; color: var(--muted); display: flex; align-items: center; gap: .5rem; }
+    .service-features li::before { content: '→'; color: var(--gold); font-size: 0.73rem; }
+
+    /* WHY */
+    .why-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.5rem; margin-top: 3.5rem; }
+    .why-card { background: var(--navy-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.8rem; text-align: center; transition: border-color .3s; }
+    .why-card:hover { border-color: rgba(201,168,76,0.4); }
+    .why-icon { font-size: 2rem; margin-bottom: .8rem; }
+    .why-title { font-family: 'Syne', sans-serif; font-size: 1rem; font-weight: 700; margin-bottom: .5rem; }
+    .why-desc { color: var(--muted); font-size: 0.84rem; line-height: 1.65; }
+
+    /* PROCESS */
+    .process-bg { background: var(--navy-mid); }
+    .process-banner { position: relative; border-radius: 16px; overflow: hidden; margin-top: 3.5rem; margin-bottom: 3rem; height: 195px; border: 1px solid var(--border); }
+    .process-banner img { width: 100%; height: 100%; object-fit: cover; object-position: center 35%; filter: saturate(0.4) brightness(0.52); }
+    .process-banner-overlay { position: absolute; inset: 0; background: linear-gradient(90deg, rgba(10,22,40,0.96) 0%, rgba(10,22,40,0.5) 65%, rgba(10,22,40,0.75) 100%); display: flex; align-items: center; padding: 0 3rem; }
+    .process-banner-text h3 { font-family: 'Syne', sans-serif; font-size: 1.5rem; font-weight: 800; margin-bottom: .4rem; }
+    .process-banner-text p { color: var(--muted); font-size: 0.9rem; }
+    .process-steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem; position: relative; }
+    .process-steps::before { content: ''; position: absolute; top: 27px; left: 14%; right: 14%; height: 2px; background: linear-gradient(90deg, var(--gold), rgba(201,168,76,0.15)); z-index: 0; }
+    .step { text-align: center; position: relative; z-index: 1; }
+    .step-num { width: 56px; height: 56px; border-radius: 50%; background: var(--navy-mid); border: 2px solid var(--gold); display: flex; align-items: center; justify-content: center; font-family: 'Syne', sans-serif; font-size: 1.2rem; font-weight: 800; color: var(--gold); margin: 0 auto 1.2rem; box-shadow: 0 0 0 4px rgba(201,168,76,0.1); }
+    .step-title { font-family: 'Syne', sans-serif; font-size: 0.92rem; font-weight: 700; margin-bottom: .45rem; }
+    .step-desc { color: var(--muted); font-size: 0.82rem; line-height: 1.65; }
+
+    /* CONTACT */
+    .contact-wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: start; margin-top: 3.5rem; }
+    .contact-info { display: flex; flex-direction: column; gap: 1.5rem; }
+    .contact-scene { border-radius: 14px; overflow: hidden; border: 1px solid var(--border); position: relative; margin-bottom: .5rem; }
+    .contact-scene img { width: 100%; height: 185px; object-fit: cover; object-position: center; filter: saturate(0.45) brightness(0.62); display: block; }
+    .contact-scene-overlay { position: absolute; inset: 0; background: linear-gradient(180deg, transparent 45%, rgba(10,22,40,0.95) 100%); }
+    .contact-item { display: flex; gap: 1rem; align-items: flex-start; }
+    .contact-icon { width: 44px; height: 44px; border-radius: 10px; background: rgba(201,168,76,0.1); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 1.1rem; flex-shrink: 0; }
+    .contact-detail strong { font-size: 0.87rem; display: block; margin-bottom: .2rem; }
+    .contact-detail span { color: var(--muted); font-size: 0.84rem; }
+    .contact-form { background: var(--navy-card); border: 1px solid var(--border); border-radius: 16px; padding: 2rem; }
+    .form-group { margin-bottom: 1.2rem; }
+    .form-group label { display: block; font-size: 0.78rem; font-weight: 600; color: var(--muted); margin-bottom: .45rem; text-transform: uppercase; letter-spacing: .6px; }
+    .form-group input, .form-group textarea, .form-group select { width: 100%; background: var(--navy-mid); border: 1px solid var(--border); border-radius: 8px; padding: .75rem 1rem; color: var(--white); font-family: 'Inter', sans-serif; font-size: 0.9rem; outline: none; transition: border-color .2s; resize: vertical; }
+    .form-group input:focus, .form-group textarea:focus, .form-group select:focus { border-color: var(--gold); }
+    .form-group select option { background: var(--navy-mid); }
+    .form-submit { width: 100%; background: var(--gold); color: var(--navy); border: none; border-radius: 8px; padding: .9rem; font-family: 'Syne', sans-serif; font-size: 1rem; font-weight: 700; cursor: pointer; transition: all .2s; box-shadow: 0 4px 20px rgba(201,168,76,0.25); }
+    .form-submit:hover { background: var(--gold-light); transform: translateY(-1px); }
+    .success-msg { display: none; text-align: center; padding: 1rem; background: rgba(34,197,94,0.1); border: 1px solid rgba(34,197,94,0.3); border-radius: 8px; color: #22c55e; font-size: 0.88rem; margin-top: 1rem; }
+
+    /* FOOTER */
+    footer { background: #060F1E; border-top: 1px solid var(--border); padding: 2.5rem 6%; text-align: center; }
+    .footer-logo { font-family: 'Syne', sans-serif; font-size: 1.3rem; font-weight: 800; margin-bottom: .4rem; }
+    .footer-logo span { color: var(--gold); }
+    .footer-text { color: var(--muted); font-size: 0.8rem; margin-bottom: 1rem; }
+    .footer-links { display: flex; justify-content: center; gap: 1.5rem; flex-wrap: wrap; margin-bottom: 1.5rem; }
+    .footer-links a { color: var(--muted); text-decoration: none; font-size: 0.8rem; transition: color .2s; }
+    .footer-links a:hover { color: var(--gold); }
+
+    /* REVEAL */
+    .reveal { opacity: 0; transform: translateY(24px); transition: opacity .65s ease, transform .65s ease; }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    /* MOBILE */
+    @media (max-width: 900px) {
+      .process-steps { grid-template-columns: 1fr 1fr; }
+      .process-steps::before { display: none; }
+    }
+    @media (max-width: 768px) {
+      nav { padding: 1rem 5%; }
+      .nav-links, .nav-cta { display: none; }
+      .hamburger { display: flex; }
+      .hero { padding: 6rem 5% 3rem; }
+      .hero-inner { grid-template-columns: 1fr; gap: 3rem; }
+      .hero-visual { order: -1; }
+      .profile-card { max-width: 280px; margin: 0 auto; }
+      .float-badge { font-size: 0.72rem; padding: .5rem .8rem; }
+      .float-badge.badge-1 { right: -5px; top: -10px; }
+      .float-badge.badge-2 { left: -5px; }
+      .about-grid, .contact-wrap { grid-template-columns: 1fr; gap: 2.5rem; }
+      section { padding: 4rem 5%; }
+      .process-banner { height: 130px; }
+      .process-banner-overlay { padding: 0 1.5rem; }
+      .process-banner-text h3 { font-size: 1.1rem; }
+    }
+    @media (max-width: 480px) {
+      .process-steps { grid-template-columns: 1fr; }
+      .hero-btns { flex-direction: column; }
+      .btn-primary, .btn-secondary { text-align: center; justify-content: center; }
+    }
+  </style>
+</head>
+<body>
+
+<nav id="mainNav">
+  <a class="logo" href="#home">Boat<span>Vantage</span></a>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="#about">About</a></li>
+    <li><a href="#services">Services</a></li>
+    <li><a href="#process">Process</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <a class="nav-cta" href="#contact">Book a Call</a>
+  <div class="hamburger" onclick="toggleMenu()"><span></span><span></span><span></span></div>
+</nav>
+
+<!-- HERO — Cinematic video background (Pexels free stock) -->
+<section class="hero" id="home">
+  <div class="hero-video-bg">
+    <!-- Free Pexels video: AI / tech office environment -->
+    <video autoplay muted loop playsinline preload="auto">
+      <source src="https://videos.pexels.com/video-files/7947452/7947452-uhd_2560_1440_25fps.mp4" type="video/mp4"/>
+      <source src="https://videos.pexels.com/video-files/3129671/3129671-uhd_2560_1440_30fps.mp4" type="video/mp4"/>
+    </video>
+  </div>
+  <!-- Static image fallback if video blocked -->
+  <div class="hero-fallback-bg"></div>
+  <div class="hero-overlay"></div>
+
+  <div class="hero-inner">
+    <div class="hero-text">
+      <div class="hero-tag"><div class="live-dot"></div> AI Solutions for Modern Businesses</div>
+      <h1>Your Business. <br>Supercharged <span class="accent">With AI.</span></h1>
+      <p class="hero-desc">BoatVantage helps businesses automate, grow, and scale using cutting-edge AI tools — from intelligent chatbots to full-stack AI websites and custom automation systems.</p>
+      <div class="hero-btns">
+        <a class="btn-primary" href="#contact">Book a Free Strategy Call →</a>
+        <a class="btn-secondary" href="#services">View Services</a>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div class="float-badge badge-1"><div class="dot"></div> AI-Powered Solutions</div>
+      <div class="profile-card">
+        <div class="profile-img-wrap">
+          <!--
+          ╔══════════════════════════════════════════════╗
+          ║  HOW TO ADD YOUR PHOTO — James, read this:   ║
+          ║                                              ║
+          ║  1. Transfer photo from Huawei to PC         ║
+          ║  2. Rename the file exactly:  photo.jpg      ║
+          ║  3. Put photo.jpg in the SAME folder as      ║
+          ║     this index.html file                     ║
+          ║  4. The img src below already says photo.jpg ║
+          ║  5. Find this CSS in the <style> tag above:  ║
+          ║       .profile-img-wrap img { display:none } ║
+          ║     Delete "display: none;" — save & refresh ║
+          ║  6. Your photo appears automatically ✓       ║
+          ╚══════════════════════════════════════════════╝
+          -->
+          <img src="photo.jpg" alt="James Beniako Boateng"/>
+          <span class="profile-img-placeholder">👤</span>
+        </div>
+        <div class="profile-name">James Beniako Boateng</div>
+        <div class="profile-title">AI Solutions Specialist</div>
+        <div class="profile-stats">
+          <div class="stat"><div class="stat-num">AI</div><div class="stat-label">Powered</div></div>
+          <div class="stat"><div class="stat-num">4</div><div class="stat-label">Services</div></div>
+          <div class="stat"><div class="stat-num">GH</div><div class="stat-label">Based</div></div>
+        </div>
+      </div>
+      <div class="float-badge badge-2">🚀 Automation Expert</div>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="section-inner">
+    <div class="section-tag reveal">Who I Am</div>
+    <h2 class="section-title reveal">Built to Give Your Business<br>a Real AI Advantage</h2>
+    <p class="section-sub reveal">BoatVantage is not a generic tech agency. Every solution is built specifically around your business goals, your customers, and your growth.</p>
+    <div class="about-grid">
+      <div class="about-img-block reveal">
+        <!-- Unsplash: AI / LLM concept image -->
+        <img class="about-scene-img"
+          src="https://images.unsplash.com/photo-1677442135703-1787eea5ce01?w=700&q=72&auto=format&fit=crop"
+          alt="AI workspace" loading="lazy"
+          onerror="this.src='https://images.unsplash.com/photo-1620712943543-bcc4688e7485?w=700&q=72&auto=format&fit=crop'"/>
+        <div class="about-img-overlay"></div>
+        <div class="about-img-caption">
+          <div class="about-img-top">
+            <div class="about-avatar">
+              <img src="photo.jpg" alt="James"/>
+              <span>👤</span>
+            </div>
+            <div class="about-name-block">
+              <h3>James Beniako Boateng</h3>
+              <p>Founder & AI Solutions Specialist</p>
+            </div>
+          </div>
+          <div class="about-tools">
+            <span class="tool-tag">OpenAI</span>
+            <span class="tool-tag">Automation</span>
+            <span class="tool-tag">Chatbots</span>
+            <span class="tool-tag">AI Websites</span>
+            <span class="tool-tag">Consulting</span>
+            <span class="tool-tag">Make.com</span>
+          </div>
+        </div>
+      </div>
+      <div class="about-text reveal">
+        <p>At BoatVantage, I combine the power of the latest AI tools with a deep understanding of what businesses actually need — to save time, reduce costs, win more clients, and scale without burning out.</p>
+        <p>Whether you're a small business owner who wants to automate customer responses, or a company that needs a fully intelligent AI-powered website, I build solutions that work from day one.</p>
+        <div class="about-highlights">
+          <div class="highlight-item">
+            <div class="highlight-icon">🎯</div>
+            <div class="highlight-text"><strong>Results-First Approach</strong><span>Every system built with measurable ROI in mind</span></div>
+          </div>
+          <div class="highlight-item">
+            <div class="highlight-icon">⚡</div>
+            <div class="highlight-text"><strong>Fast Turnaround</strong><span>Solutions delivered quickly without cutting corners</span></div>
+          </div>
+          <div class="highlight-item">
+            <div class="highlight-icon">🌍</div>
+            <div class="highlight-text"><strong>Global Reach, Local Commitment</strong><span>Serving clients worldwide from Ghana</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SERVICES -->
+<section id="services" class="services-bg">
+  <div class="section-inner">
+    <div class="section-tag reveal">What I Offer</div>
+    <h2 class="section-title reveal">AI Services That Move<br>Your Business Forward</h2>
+    <p class="section-sub reveal">Four powerful service pillars designed to automate, elevate, and scale your business using the most advanced AI tools available today.</p>
+    <div class="services-grid">
+
+      <div class="service-card reveal">
+        <div class="service-img-wrap">
+          <!-- Unsplash: chatbot / customer support AI -->
+          <img class="service-img"
+            src="https://images.unsplash.com/photo-1531746790731-6c087fecd65a?w=600&q=70&auto=format&fit=crop"
+            alt="AI Chatbot" loading="lazy"
+            onerror="this.src='https://images.unsplash.com/photo-1587560699334-cc4ff634909a?w=600&q=70&auto=format&fit=crop'"/>
+          <div class="service-img-overlay"></div>
+        </div>
+        <div class="service-body">
+          <div class="service-icon">🤖</div>
+          <div class="service-title">AI Automation & Chatbots</div>
+          <p class="service-desc">Deploy intelligent chatbots and automation systems that handle customer queries, generate leads, and run processes 24/7 — without you lifting a finger.</p>
+          <ul class="service-features">
+            <li>Custom AI chatbot development</li>
+            <li>Lead capture automation</li>
+            <li>Customer support bots</li>
+            <li>Workflow & task automation</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="service-card reveal">
+        <div class="service-img-wrap">
+          <!-- Unsplash: web / digital interface -->
+          <img class="service-img"
+            src="https://images.unsplash.com/photo-1547658719-da2b51169166?w=600&q=70&auto=format&fit=crop"
+            alt="AI Website" loading="lazy"
+            onerror="this.src='https://images.unsplash.com/photo-1558655146-9f40138edfeb?w=600&q=70&auto=format&fit=crop'"/>
+          <div class="service-img-overlay"></div>
+        </div>
+        <div class="service-body">
+          <div class="service-icon">🌐</div>
+          <div class="service-title">AI-Powered Websites</div>
+          <p class="service-desc">Modern, conversion-focused websites built with embedded AI features — smart search, dynamic content, chatbot integration, and more.</p>
+          <ul class="service-features">
+            <li>AI-integrated web design</li>
+            <li>Smart lead capture systems</li>
+            <li>Automated content updates</li>
+            <li>Conversion-optimized layouts</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="service-card reveal">
+        <div class="service-img-wrap">
+          <!-- Unsplash: business strategy / consulting -->
+          <img class="service-img"
+            src="https://images.unsplash.com/photo-1553484771-371a605b060b?w=600&q=70&auto=format&fit=crop"
+            alt="AI Consulting" loading="lazy"
+            onerror="this.src='https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=600&q=70&auto=format&fit=crop'"/>
+          <div class="service-img-overlay"></div>
+        </div>
+        <div class="service-body">
+          <div class="service-icon">🧠</div>
+          <div class="service-title">AI Consulting & Strategy</div>
+          <p class="service-desc">Not sure where AI fits in your business? I map out a clear, actionable AI strategy tailored to your goals, budget, and industry.</p>
+          <ul class="service-features">
+            <li>AI readiness assessment</li>
+            <li>Custom AI roadmap creation</li>
+            <li>Tool selection & setup guidance</li>
+            <li>ROI-focused implementation plan</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="service-card reveal">
+        <div class="service-img-wrap">
+          <!-- Unsplash: data / analytics dashboard -->
+          <img class="service-img"
+            src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=600&q=70&auto=format&fit=crop"
+            alt="AI Business Systems" loading="lazy"
+            onerror="this.src='https://images.unsplash.com/photo-1504868584819-f8e8b4b6d7e3?w=600&q=70&auto=format&fit=crop'"/>
+          <div class="service-img-overlay"></div>
+        </div>
+        <div class="service-body">
+          <div class="service-icon">📈</div>
+          <div class="service-title">AI Business Systems</div>
+          <p class="service-desc">End-to-end AI systems that connect your tools, automate your workflows, and create a business that runs smarter with less manual effort.</p>
+          <ul class="service-features">
+            <li>CRM & email automation</li>
+            <li>AI content pipelines</li>
+            <li>Business process automation</li>
+            <li>Analytics & reporting setup</li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- WHY BOATVANTAGE -->
+<section id="why">
+  <div class="section-inner">
+    <div class="section-tag reveal">Why BoatVantage</div>
+    <h2 class="section-title reveal">The BoatVantage Difference</h2>
+    <div class="why-grid">
+      <div class="why-card reveal"><div class="why-icon">🔒</div><div class="why-title">Trusted & Transparent</div><p class="why-desc">No hidden fees, no confusing jargon. You know exactly what you're getting and what it costs before we start.</p></div>
+      <div class="why-card reveal"><div class="why-icon">💡</div><div class="why-title">AI-First Thinking</div><p class="why-desc">Everything is built with AI at its core — not as an afterthought, but as the engine powering your results.</p></div>
+      <div class="why-card reveal"><div class="why-icon">🤝</div><div class="why-title">Built For Your Goals</div><p class="why-desc">No cookie-cutter solutions. Every system I build is designed around what your specific business needs to grow.</p></div>
+      <div class="why-card reveal"><div class="why-icon">⚡</div><div class="why-title">Speed to Results</div><p class="why-desc">Fast deployment, minimal friction. You see real outputs quickly — not months-long projects with no end in sight.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- PROCESS -->
+<section id="process" class="process-bg">
+  <div class="section-inner">
+    <div class="section-tag reveal">How It Works</div>
+    <h2 class="section-title reveal">From Call to Live System<br>in 4 Simple Steps</h2>
+    <div class="process-banner reveal">
+      <!-- Unsplash: modern office tech collaboration -->
+      <img src="https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=1200&q=68&auto=format&fit=crop"
+        alt="Process" loading="lazy"
+        onerror="this.src='https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=1200&q=68&auto=format&fit=crop'"/>
+      <div class="process-banner-overlay">
+        <div class="process-banner-text">
+          <h3>A clear, no-stress process</h3>
+          <p>From first call to live AI system — designed to get you results fast.</p>
+        </div>
+      </div>
+    </div>
+    <div class="process-steps">
+      <div class="step reveal"><div class="step-num">1</div><div class="step-title">Book a Free Call</div><p class="step-desc">A focused 30-minute strategy call to understand your business, challenges, and goals.</p></div>
+      <div class="step reveal"><div class="step-num">2</div><div class="step-title">Custom AI Plan</div><p class="step-desc">I design a tailored AI solution roadmap — tools, timeline, and expected outcomes laid out clearly.</p></div>
+      <div class="step reveal"><div class="step-num">3</div><div class="step-title">Build & Deploy</div><p class="step-desc">I build and deliver your solution with full setup, testing, and integration into your existing systems.</p></div>
+      <div class="step reveal"><div class="step-num">4</div><div class="step-title">Support & Scale</div><p class="step-desc">Ongoing guidance to ensure everything runs smoothly and scales as your business grows.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="section-inner">
+    <div class="section-tag reveal">Get In Touch</div>
+    <h2 class="section-title reveal">Ready to Give Your Business<br>an AI Advantage?</h2>
+    <p class="section-sub reveal">Book a free 30-minute strategy call. No pressure, no pitch — just an honest look at what AI can do for your business.</p>
+    <div class="contact-wrap">
+      <div class="contact-info reveal">
+        <div class="contact-scene">
+          <!-- Unsplash: professional consultation / meeting -->
+          <img src="https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=700&q=68&auto=format&fit=crop"
+            alt="Book a strategy call" loading="lazy"
+            onerror="this.src='https://images.unsplash.com/photo-1556761175-4b46a572b786?w=700&q=68&auto=format&fit=crop'"/>
+          <div class="contact-scene-overlay"></div>
+        </div>
+        <div class="contact-item"><div class="contact-icon">📧</div><div class="contact-detail"><strong>Email</strong><span>hello@boatvantage.com</span></div></div>
+        <div class="contact-item"><div class="contact-icon">📍</div><div class="contact-detail"><strong>Location</strong><span>Accra, Ghana · Available Globally</span></div></div>
+        <div class="contact-item"><div class="contact-icon">🕐</div><div class="contact-detail"><strong>Response Time</strong><span>Within 24 hours</span></div></div>
+        <div class="contact-item"><div class="contact-icon">📞</div><div class="contact-detail"><strong>Book a Call</strong><span>30-min free strategy session</span></div></div>
+      </div>
+      <div class="contact-form reveal">
+        <div class="form-group"><label>Your Name</label><input type="text" id="fname" placeholder="e.g. Kwame Mensah"/></div>
+        <div class="form-group"><label>Email Address</label><input type="email" id="femail" placeholder="you@yourbusiness.com"/></div>
+        <div class="form-group">
+          <label>Service Interested In</label>
+          <select id="fservice">
+            <option value="">Select a service...</option>
+            <option>AI Automation & Chatbots</option>
+            <option>AI-Powered Website</option>
+            <option>AI Consulting & Strategy</option>
+            <option>AI Business Systems</option>
+            <option>Not sure – need advice</option>
+          </select>
+        </div>
+        <div class="form-group"><label>Tell Me About Your Business</label><textarea id="fmsg" rows="4" placeholder="What does your business do? What problem are you trying to solve?"></textarea></div>
+        <button class="form-submit" onclick="submitForm()">Send Message & Book a Call →</button>
+        <div class="success-msg" id="successMsg">✅ Message sent! I'll be in touch within 24 hours to schedule your strategy call.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-logo">Boat<span>Vantage</span></div>
+  <p class="footer-text">AI Solutions for Businesses Ready to Scale · Accra, Ghana</p>
+  <div class="footer-links">
+    <a href="#home">Home</a><a href="#about">About</a><a href="#services">Services</a><a href="#process">Process</a><a href="#contact">Contact</a>
+  </div>
+  <p style="color:var(--muted);font-size:0.73rem;margin-top:1.2rem;">© 2025 BoatVantage · James Beniako Boateng · All Rights Reserved</p>
+</footer>
+
+<script>
+  function toggleMenu() {
+    const links = document.getElementById('navLinks');
+    if (links.style.display === 'flex') {
+      links.removeAttribute('style');
+    } else {
+      Object.assign(links.style, { display:'flex', flexDirection:'column', position:'absolute', top:'68px', right:'5%', background:'rgba(22,42,74,0.97)', backdropFilter:'blur(12px)', border:'1px solid rgba(201,168,76,0.18)', borderRadius:'12px', padding:'1.2rem 1.8rem', gap:'1rem', zIndex:'300' });
+    }
+  }
+  document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', e => {
+      e.preventDefault();
+      const t = document.querySelector(a.getAttribute('href'));
+      if (t) t.scrollIntoView({ behavior: 'smooth' });
+      document.getElementById('navLinks').removeAttribute('style');
+    });
+  });
+  window.addEventListener('scroll', () => {
+    document.getElementById('mainNav').style.boxShadow = window.scrollY > 50 ? '0 4px 30px rgba(0,0,0,0.35)' : 'none';
+  });
+  const obs = new IntersectionObserver(entries => entries.forEach(e => { if(e.isIntersecting){ e.target.classList.add('visible'); obs.unobserve(e.target); } }), { threshold: 0.1 });
+  document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+  function submitForm() {
+    const name = document.getElementById('fname').value.trim();
+    const email = document.getElementById('femail').value.trim();
+    if (!name || !email) { alert('Please fill in your name and email at minimum.'); return; }
+    const btn = document.querySelector('.form-submit');
+    btn.textContent = 'Message Sent ✓'; btn.style.background = '#22c55e';
+    document.getElementById('successMsg').style.display = 'block';
+  }
+  /* Auto-show photo if file loads successfully */
+  document.querySelectorAll('.profile-img-wrap img, .about-avatar img').forEach(img => {
+    img.addEventListener('load', function() {
+      this.style.display = 'block';
+      const ph = this.nextElementSibling;
+      if (ph) ph.style.display = 'none';
+    });
+    img.addEventListener('error', function() { this.style.display = 'none'; });
+  });
+</script>
+</body>
+</html>
